@@ -71,7 +71,8 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
   digitalWrite(_WAKE_PIN, LOW);
   Wire.beginTransmission(_I2C_ADDR);
   Wire.write(MEAS_MODE);
-  Wire.write(0x10);  // constant power mode, IAQ measurement every second
+  //Wire.write(0x10);  // constant power mode, IAQ measurement every second
+  Wire.write(0x30);  // Every 60s
   Wire.endTransmission();
   //CCS811::sleep();
   digitalWrite(_WAKE_PIN, HIGH);
@@ -100,6 +101,7 @@ byte CCS811::readStatus(void)
 byte CCS811::readHW_ID(void)
 {
   digitalWrite(_WAKE_PIN, LOW);
+  delay(2);
   Wire.beginTransmission(_I2C_ADDR);
   Wire.write(HW_ID);
   Wire.endTransmission();
@@ -115,6 +117,7 @@ byte CCS811::readHW_ID(void)
 byte CCS811::readErrorID(byte _status)
 {
   digitalWrite(_WAKE_PIN, LOW);
+  delay(2);
   Wire.beginTransmission(_I2C_ADDR);
   Wire.write(ERROR_ID);
   Wire.endTransmission();
@@ -137,6 +140,7 @@ byte CCS811::readErrorID(byte _status)
 void CCS811::sleep()
 {
   digitalWrite(_WAKE_PIN, LOW);
+  delay(2);
   Wire.beginTransmission(_I2C_ADDR);
   Wire.write(MEAS_MODE);
   Wire.write(0x00000000);  // sets sensor to idle; measurements are disabled; lowest power mode
@@ -149,7 +153,8 @@ void CCS811::getData(void)
 {
   //CCS811::compensate(t, rh);
   digitalWrite(_WAKE_PIN, LOW);
-  delay(1000);
+  //delay(1000);
+  delay(2);
 
   Wire.beginTransmission(_I2C_ADDR);
   Wire.write(ALG_RESULT_DATA);    // reading ALG_RESULT_DATA clears DATA_READY bit in 0x00
@@ -188,6 +193,7 @@ int CCS811::readCO2(void)
 void CCS811::compensate(float t, float rh)    // compensate for temperature and relative humidity
 {
   digitalWrite(_WAKE_PIN, LOW);
+  delay(2);
 
   int _temp, _rh;
   if(t>0)
