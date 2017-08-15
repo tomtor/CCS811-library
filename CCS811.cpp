@@ -178,6 +178,39 @@ void CCS811::getData(void)
   digitalWrite(_WAKE_PIN, HIGH);
 }
 
+// Copied from https://github.com/sparkfun/SparkFun_CCS811_Arduino_Library/blob/master/src/SparkFunCCS811.cpp
+float CCS811::getTemperature(void)
+{
+  digitalWrite(_WAKE_PIN, LOW);
+  delayMicroseconds(50);
+
+  Wire.beginTransmission(_I2C_ADDR);
+  Wire.write(NTC);
+  Wire.endTransmission();
+
+  Wire.requestFrom(_I2C_ADDR, (uint8_t)4);
+  delay(1);
+  int buffer[4];
+  if(Wire.available() == 4)
+  {
+    for(int i=0; i<4; i++)
+    {
+      buffer[i] = Wire.read();
+    }
+  }
+  digitalWrite(_WAKE_PIN, HIGH);
+
+  uint16_t vrefCounts = ((uint16_t)buffer[0] << 8) | buffer[1];
+  uint16_t ntcCounts = ((uint16_t)buffer[2] << 8) | buffer[3];
+  float resistance = ((float)ntcCounts * 10000 / (float)vrefCounts);
+  
+  //Code from Milan Malesevic and Zoran Stupic, 2011,
+  //Modified by Max Mayfield,
+  float temperature = log((long)resistance);
+  temperature = 1 / (0.001129148 + (0.000234125 * temperature) + (0.0000000876741 * temperature * temperature * temperature));
+  temperature = temperature - 273.15;  // Convert Kelvin to Celsius
+  return temperature;
+}
 
 int CCS811::readTVOC(void)
 {

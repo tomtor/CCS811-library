@@ -40,6 +40,7 @@
 #define MEAS_MODE       0x01
 #define ALG_RESULT_DATA 0x02
 #define ENV_DATA        0x05
+#define NTC             0x06
 #define APP_START       0xF4
 #define HW_ID           0x20
 #define ERROR_ID        0xE0
@@ -55,6 +56,7 @@ class CCS811
     int readTVOC(void);
     int readCO2(void);
     void getData(void);
+    float getTemperature(void);
     void compensate(float t, float rh);
     byte readErrorID(byte _status);
     void reset(void);
