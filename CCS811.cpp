@@ -36,6 +36,7 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
   pinMode(_WAKE_PIN, OUTPUT);   // set WAKE pin as OUTPUT
   //PORTD &= ~(1<<PORTD4);  // assert WAKE pin LOW to initiate communication with sensor
   digitalWrite(_WAKE_PIN, LOW);  // WAKE_PIN on the sensor is active low, must always be asserted before any communication and held low throughout
+  delayMicroseconds(50); // recommended 50us delay after asserting WAKE pin
 
   byte hw_id = CCS811::readHW_ID();
   if(hw_id != 0x81)  // this is the expected hardware ID
@@ -54,6 +55,7 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
   }
 
   digitalWrite(_WAKE_PIN, LOW);
+  delayMicroseconds(50); // recommended 50us delay after asserting WAKE pin
   Wire.beginTransmission(_I2C_ADDR); // least significant bit indicates write (0) or read (1)
   Wire.write(APP_START);
   Wire.endTransmission();
@@ -69,6 +71,7 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
   }
 
   digitalWrite(_WAKE_PIN, LOW);
+  delayMicroseconds(50); // recommended 50us delay after asserting WAKE pin
   Wire.beginTransmission(_I2C_ADDR);
   Wire.write(MEAS_MODE);
   //Wire.write(0x10);  // constant power mode, IAQ measurement every second
@@ -83,6 +86,7 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
 
 byte CCS811::readStatus(void)
 {
+  delayMicroseconds(20); // recommended 20us delay while performing back to back I2C operations
   digitalWrite(_WAKE_PIN, LOW);
   delayMicroseconds(50);
   Wire.beginTransmission(_I2C_ADDR);
@@ -152,9 +156,7 @@ void CCS811::sleep()
 
 void CCS811::getData(void)
 {
-  //CCS811::compensate(t, rh);
   digitalWrite(_WAKE_PIN, LOW);
-  //delay(1000);
   delayMicroseconds(50);
 
   Wire.beginTransmission(_I2C_ADDR);
