@@ -27,7 +27,7 @@
  #include "WProgram.h"  // to allow boolean and byte functions
 #endif
 
-#include "Wire.h"   // Wire library for I2C protocol
+#include "SoftWire.h"   // Wire library for I2C protocol
 
 #define nWAKE           4      // pin 4 is tied to CCS811 nWAKE pin in sensor node
 #define nINT            7      // pin 7 is tied to CCS811 nINT pin in sensor node

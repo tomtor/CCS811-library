@@ -21,6 +21,9 @@
 
 #include "CCS811.h"
 
+TwoWire SWire(PB6, PB7, SOFT_FAST);
+#define Wire SWire
+
 CCS811::CCS811()
 {
   // empty constructor, just because.
