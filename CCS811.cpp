@@ -209,10 +209,15 @@ float CCS811::getTemperature(void)
   uint16_t ntcCounts = ((uint16_t)buffer[2] << 8) | buffer[3];
   float resistance = ((float)ntcCounts * 10000 / (float)vrefCounts);
   
+#if 0
   //Code from Milan Malesevic and Zoran Stupic, 2011,
   //Modified by Max Mayfield,
   float temperature = log((long)resistance);
   temperature = 1 / (0.001129148 + (0.000234125 * temperature) + (0.0000000876741 * temperature * temperature * temperature));
+#else
+  float temperature = log(resistance/10000);
+  temperature= 1 / ((.003354016)+(.0002569850*temperature)+(.000002620131*(pow(temperature,2)))+(.00000006383091*(pow(temperature,3))));
+#endif
   temperature = temperature - 273.15;  // Convert Kelvin to Celsius
   return temperature;
 }
