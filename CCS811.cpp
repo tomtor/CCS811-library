@@ -37,7 +37,6 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
   _WAKE_PIN = WAKE_PIN;
   Wire.begin();
   pinMode(_WAKE_PIN, OUTPUT);   // set WAKE pin as OUTPUT
-  //PORTD &= ~(1<<PORTD4);  // assert WAKE pin LOW to initiate communication with sensor
   digitalWrite(_WAKE_PIN, LOW);  // WAKE_PIN on the sensor is active low, must always be asserted before any communication and held low throughout
   delayMicroseconds(50); // recommended 50us delay after asserting WAKE pin
 
@@ -80,7 +79,6 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
   //Wire.write(0x10);  // constant power mode, IAQ measurement every second
   Wire.write(0x30);  // Every 60s
   Wire.endTransmission();
-  //CCS811::sleep();
   digitalWrite(_WAKE_PIN, HIGH);
 
   return true;
@@ -167,7 +165,6 @@ void CCS811::getData(void)
   Wire.endTransmission();
 
   Wire.requestFrom(_I2C_ADDR, (uint8_t)4);
-  delay(1);
   int buffer[4];
   if(Wire.available() == 4)
   {
@@ -194,7 +191,6 @@ float CCS811::getTemperature(void)
   Wire.endTransmission();
 
   Wire.requestFrom(_I2C_ADDR, (uint8_t)4);
-  delay(1);
   int buffer[4];
   if(Wire.available() == 4)
   {
