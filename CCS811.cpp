@@ -48,14 +48,15 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
   }
 
   byte status = CCS811::readStatus();
-  uint8_t bit = (status & (1 << 5-1)) != 0; // black magic to read APP_VALID bit from STATUS register
-  if(bit != 1)
+  uint8_t bit = (status & (1 << 5-1)); // black magic to read APP_VALID bit from STATUS register
+  if(!bit)
   {
     Serial.println("Error: No application firmware loaded.");
     readErrorID(status);
     return false;
   }
 
+  delayMicroseconds(20);
   digitalWrite(_WAKE_PIN, LOW);
   delayMicroseconds(50); // recommended 50us delay after asserting WAKE pin
   Wire.beginTransmission(_I2C_ADDR); // least significant bit indicates write (0) or read (1)
@@ -64,8 +65,8 @@ boolean CCS811::begin(uint8_t I2C_ADDR, uint8_t WAKE_PIN)
   digitalWrite(_WAKE_PIN, HIGH);
 
   status = CCS811::readStatus();
-  bit = (status & (1<<8-1)) !=0; // black magic to read FW_MODE bit from STATUS register
-  if(bit != 1)
+  bit = (status & (1<<8-1)); // black magic to read FW_MODE bit from STATUS register
+  if(!bit)
   {
     Serial.println("Error: Firmware still in boot mode.");
     readErrorID(status);
@@ -132,8 +133,8 @@ byte CCS811::readErrorID(byte _status)
   byte error_id = Wire.read();
 
   digitalWrite(_WAKE_PIN, HIGH);
-  uint8_t bit = (_status & (1 << 1-1)) != 0; // black magic to read ERROR bit from STATUS register
-  if(bit == 1)
+  uint8_t bit = (_status & (1 << 1-1)); // black magic to read ERROR bit from STATUS register
+  if(bit)
   {
     Serial.print("Error ID: ");
     Serial.println(error_id);
